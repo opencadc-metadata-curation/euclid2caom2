@@ -67,12 +67,12 @@
 #
 
 from os.path import dirname, join, realpath
-from caom2pipe.manage_composable import Config, StorageName
+from caom2pipe.manage_composable import Config, StorageName, TaskType
 import pytest
 
 COLLECTION = 'EUCLID'
-SCHEME = 'cadc'
-PREVIEW_SCHEME = 'cadc'
+SCHEME = 'esa'
+PREVIEW_SCHEME = 'esa'
 
 
 @pytest.fixture()
@@ -82,6 +82,8 @@ def test_config():
     config.preview_scheme = PREVIEW_SCHEME
     config.scheme = SCHEME
     config.logging_level = 'INFO'
+    config.task_types = [TaskType.INGEST]
+    config.data_read_groups = ['ivo://cadc.nrc.ca/gms?EuclidCanRead', 'ivo://cadc.nrc.ca/gms?CADC']
     StorageName.collection = config.collection
     StorageName.preview_scheme = config.preview_scheme
     StorageName.scheme = config.scheme
@@ -95,7 +97,7 @@ def test_data_dir():
     fqn = join(this_dir, 'data')
     return fqn
 
-             
+
 @pytest.fixture()
-def change_test_dir(tmp_path, monkeypatch): 
+def change_test_dir(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
