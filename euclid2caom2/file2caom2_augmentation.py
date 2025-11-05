@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2024.                            (c) 2024.
+#  (c) 2025.                            (c) 2025.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -79,35 +79,20 @@ class EUCLIDFits2caom2Visitor(cc.Fits2caom2VisitorRunnerMeta):
     def __init__(self, observation, **kwargs):
         super().__init__(observation, **kwargs)
 
-    def _get_mapping(self, dest_uri):
+    def _get_mappings(self, dest_uri):
         if self._storage_name.is_auxiliary():
-            return main_app.EUCLIDMappingAuxiliary(
-                self._clients,
-                self._config,
-                dest_uri,
-                self._observation,
-                self._reporter,
-                self._storage_name,
-            )
+            return [main_app.EUCLIDMappingAuxiliary(
+                self._storage_name, self._clients, self._reporter, self._observation, self._config
+            )]
         else:
             if '-NIR-' in dest_uri:
-                return main_app.EUCLIDMappingNIR(
-                    self._clients,
-                    self._config,
-                    dest_uri,
-                    self._observation,
-                    self._reporter,
-                    self._storage_name,
-                )
+                return [main_app.EUCLIDMappingNIR(
+                    self._storage_name, self._clients, self._reporter, self._observation, self._config
+                )]
             else:
-                return main_app.EUCLIDMappingVIS(
-                    self._clients,
-                    self._config,
-                    dest_uri,
-                    self._observation,
-                    self._reporter,
-                    self._storage_name,
-                )
+                return [main_app.EUCLIDMappingVIS(
+                    self._storage_name, self._clients, self._reporter, self._observation, self._config
+                )]
 
     def _get_parser(self, blueprint, uri):
         headers = self._storage_name.metadata.get(uri)
