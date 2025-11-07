@@ -186,7 +186,7 @@ class EUCLIDMappingAuxiliary(cc.TelescopeMapping2):
         bp.set('Plane.provenance.name', 'Euclid OU-MER')
         # # SGw 12-12-24
         bp.set('Plane.provenance.project', 'Euclid OU-MER')
-        bp.set('Plane.provenance.reference', 'https://www.euclid-ec.org')
+        bp.set('Plane.provenance.reference', 'https://www.euclid-ec.org/')
 
         bp.set('Artifact.productType', ProductType.AUXILIARY)
         bp.set('Artifact.releaseType', ReleaseType.DATA)
