@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2024.                            (c) 2024.
+#  (c) 2025.                            (c) 2025.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -66,7 +66,7 @@
 # ***********************************************************************
 #
 
-from euclid2caom2 import EUCLIDName
+from euclid2caom2 import EUCLIDName, EUCLID_DR1_Name
 
 
 def test_is_valid():
@@ -118,3 +118,28 @@ def test_storage_name(test_config):
             test_subject = EUCLIDName(source_names=[uri])
             assert test_subject.obs_id == tile_id, f'obs id {uri}'
             assert test_subject.product_id == f'{tile_id}_{product_id}', f'product id {uri}'
+
+
+def test_storage_name_dr1(test_config):
+    # test that obs_id, product_id setting is handled by the ctor
+    entries = [
+        'esa:EUCLID_DR1/EUC_MER_BGSUB-MOSAIC-NIR-H_TILE101363214-C9D666_20250730T024715.729229Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_BGSUB-MOSAIC-NIR-J_TILE101363214-2E980D_20250730T024841.170931Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE101363214-708EEE_20250730T025218.739390Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_BGSUB-MOSAIC-VIS_TILE101363214-CA6449_20250730T030407.962880Z_00.00.fits',
+    ]
+
+    test_config.collection = 'EUCLID_DR1'
+
+    expected_ids = {
+        'TILE101363214-NIR-H': 'TILE101363214-NIR-H',
+        'TILE101363214-NIR-J': 'TILE101363214-NIR-J',
+        'TILE101363214-NIR-Y': 'TILE101363214-NIR-Y',
+        'TILE101363214-VIS': 'TILE101363214-VIS',
+    }
+
+    for entry in entries:
+        test_subject = EUCLID_DR1_Name(source_names=[entry])
+        lookup = expected_ids.get(test_subject.obs_id)
+        assert lookup is not None, f'wrong obs id {test_subject.obs_id}'
+        assert test_subject.product_id == lookup, f'product id {test_subject.product_id}'

@@ -81,18 +81,20 @@ class EUCLIDFits2caom2Visitor(cc.Fits2caom2VisitorRunnerMeta):
 
     def _get_mappings(self, dest_uri):
         if self._storage_name.is_auxiliary():
-            return [main_app.EUCLIDMappingAuxiliary(
+            result = [main_app.EUCLIDMappingAuxiliary(
                 self._storage_name, self._clients, self._reporter, self._observation, self._config
             )]
         else:
             if '-NIR-' in dest_uri:
-                return [main_app.EUCLIDMappingNIR(
+                result = [main_app.EUCLIDMappingNIR(
                     self._storage_name, self._clients, self._reporter, self._observation, self._config
                 )]
             else:
-                return [main_app.EUCLIDMappingVIS(
+                result = [main_app.EUCLIDMappingVIS(
                     self._storage_name, self._clients, self._reporter, self._observation, self._config
                 )]
+        self._logger.debug(f'Returning {result[0].__class__.__name__} for {self._storage_name.file_uri}')
+        return result
 
     def _get_parser(self, blueprint, uri):
         headers = self._storage_name.metadata.get(uri)

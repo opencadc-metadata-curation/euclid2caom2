@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2024.                            (c) 2024.
+#  (c) 2025.                            (c) 2025.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -78,13 +78,23 @@ import logging
 import sys
 import traceback
 
+from caom2pipe.manage_composable import Config
 from caom2pipe.run_composable import run_by_state_runner_meta, run_by_todo_runner_meta
 from euclid2caom2 import file2caom2_augmentation
-from euclid2caom2.main_app import EUCLIDName
+from euclid2caom2.main_app import EUCLIDName, EUCLID_DR1_Name
 
 
 META_VISITORS = [file2caom2_augmentation]
 DATA_VISITORS = []
+
+
+def _common_init():
+    config = Config()
+    config.get_executors()
+    storage_name_ctor = EUCLID_DR1_Name
+    if config.collection == 'EUCLID':
+        storage_name_ctor = EUCLIDName
+    return config, storage_name_ctor
 
 
 def _run():
@@ -94,8 +104,9 @@ def _run():
     :return 0 if successful, -1 if there's any sort of failure. Return status
         is used by airflow for task instance management and reporting.
     """
+    config, storage_name_ctor = _common_init()
     return run_by_todo_runner_meta(
-        meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS, storage_name_ctor=EUCLIDName
+        config=config, meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS, storage_name_ctor=storage_name_ctor
     )
 
 
@@ -114,8 +125,9 @@ def run():
 def _run_incremental():
     """Uses a state file with a timestamp to identify the work to be done.
     """
+    config, storage_name_ctor = _common_init()
     return run_by_state_runner_meta(
-        meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS, storage_name_ctor=EUCLIDName
+        config=config, meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS, storage_name_ctor=storage_name_ctor
     )
 
 

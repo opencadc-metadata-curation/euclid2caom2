@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2024.                            (c) 2024.
+#  (c) 2025.                            (c) 2025.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -97,7 +97,7 @@ def test_main_app(svo_mock, test_name, test_config, tmp_path, change_test_dir):
     test_config.data_sources = [tmp_path.as_posix()]
     test_config.change_working_directory(tmp_path.as_posix())
     test_config.proxy_file_name = 'test_proxy.pem'
-    test_config.logging_level = 'ERROR'
+    test_config.logging_level = 'INFO'
     test_config.write_to_file(test_config)
 
     test_reporter = mc.ExecutionReporter(test_config, mc.Observable(test_config))
@@ -134,7 +134,12 @@ def test_main_app(svo_mock, test_name, test_config, tmp_path, change_test_dir):
             return temp
         clients_mock.data_client.info.side_effect = _info_mock
 
-        storage_name = main_app.EUCLIDName(source_names=[entry])
+        if '_dr1_' in test_name:
+            mc.StorageName.collection = 'EUCLID_DR1'
+            storage_name = main_app.EUCLID_DR1_Name(source_names=[entry])
+        else:
+            storage_name = main_app.EUCLIDName(source_names=[entry])
+
         context = {'storage_name': storage_name}
         try:
             test_subject.execute(context)
@@ -157,6 +162,7 @@ def test_main_app(svo_mock, test_name, test_config, tmp_path, change_test_dir):
                     f'Differences found in observation {expected.observation_id}\n{compare_text}.\nCheck {actual_fqn}'
                 )
         else:
+            mc.write_obs_to_file(test_subject._observation, actual_fqn)
             raise AssertionError(f'No expected observation here {expected_fqn}. See actual here {actual_fqn}')
     else:
         raise AssertionError(f'No observation created for comparison with {expected_fqn}')
@@ -168,7 +174,8 @@ def _svo_mock(url):
     try:
         x = url.split('/')
         filter_name = x[-1].replace('&VERB=0', '')
-        votable = parse_single_table(f'{os.path.dirname(os.path.realpath(__file__))}/data/filters/{filter_name}.xml')
+        dir_name = f'{os.path.dirname(os.path.realpath(__file__))}/data/filters/{filter_name}.xml'
+        votable = parse_single_table(dir_name)
         return votable, None
     except Exception as _:
         logging.error(f'get_vo_table failure for url {url}')

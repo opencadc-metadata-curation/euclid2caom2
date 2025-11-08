@@ -80,6 +80,7 @@ from caom2pipe import manage_composable as mc
 
 
 __all__ = [
+    'EUCLID_DR1_Name',
     'EUCLIDMappingNIR',
     'EUCLIDMappingVIS',
     'EUCLIDName',
@@ -126,6 +127,9 @@ class EUCLIDName(mc.StorageName):
             raise mc.CadcException(f'Calling get_filter_name when it cannot answer correctly.')
         return result
 
+    def get_target_name(self):
+        return self._obs_id
+
     def is_auxiliary(self):
         return (
             '-CAT_' in self._file_name
@@ -159,6 +163,44 @@ class EUCLIDName(mc.StorageName):
                 self._product_id = f'{self._obs_id}_{product_id_bits[-1]}'
 
 
+class EUCLID_DR1_Name(EUCLIDName):
+    """
+    Split each band into it's own Observation:
+    e.g.
+    TILE102027660-NIR-Y
+    TILE102027660-NIR-J
+    TILE102027660-NIR-H
+    TILE102027660-VIS
+    """
+
+    def get_target_name(self):
+        return self._obs_id.split('-')[0]
+
+    def set_obs_id(self, **kwargs):
+        bits = self._file_name.split('_')
+        temp_obs_id = bits[3].split('-')[0]
+        if '-NIR-' in self._file_name:
+            filter_info = f'NIR-{bits[2].split('-')[-1]}'
+        elif '-VIS_' in self._file_name:
+            filter_info = 'VIS'
+        else:
+            raise mc.CadcException(f'Cannot extract filter name from {self._file_name}')
+        self._obs_id = f'{temp_obs_id}-{filter_info}'
+        if not self._obs_id.startswith('TILE'):
+            raise mc.CadcException(f'Unexpected naming pattern {self._file_name}')
+
+    def set_product_id(self, **kwargs):
+        bits = self._file_name.split('_')
+        product_id_bits = bits[2].split('-')
+        if product_id_bits[-1] == 'CAT' and len(product_id_bits) == 3:
+            self._product_id = f'{self._obs_id}_{'_'.join(product_id_bits[-2:])}'
+        else:
+            if product_id_bits[0] == 'MOSAIC':
+                self._product_id = f'{self._obs_id}_{product_id_bits[-2]}'
+            else:
+                self._product_id = self._obs_id
+
+
 class EUCLIDMappingAuxiliary(cc.TelescopeMapping2):
 
     def accumulate_blueprint(self, bp):
@@ -173,7 +215,7 @@ class EUCLIDMappingAuxiliary(cc.TelescopeMapping2):
 
         bp.set('Observation.instrument.name', '_get_instrument_name()')
         bp.set('Observation.proposal.id', 'Q1')
-        bp.set('Observation.target.name', self._storage_name.obs_id)
+        bp.set('Observation.target.name', self._storage_name.get_target_name())
         bp.add_attribute('Observation.target_position.point.cval1', 'CRVAL1')
         bp.add_attribute('Observation.target_position.point.cval2', 'CRVAL2')
         bp.set('Observation.target_position.coordsys', 'FK5')
@@ -313,6 +355,7 @@ class EUCLIDMappingVIS(EUCLIDMappingNIR):
 
     def accumulate_blueprint(self, bp):
         super().accumulate_blueprint(bp)
+        bp.set('Plane.dataProductType', DataProductType.IMAGE)
         # from https://www.euclid-ec.org/science/overview/#
         # VIS
         # pixel scale: 0.1 arcsecond
