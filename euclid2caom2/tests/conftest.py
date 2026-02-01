@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2024.                             (c) 2024.
+#  (c) 2026.                             (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -70,7 +70,8 @@ from os.path import dirname, join, realpath
 from caom2pipe.manage_composable import Config, StorageName, TaskType
 import pytest
 
-COLLECTION = 'EUCLID'
+COLLECTION = 'EUCLID.DR1'
+NAMESPACE = 'EUCLID/DR1'
 SCHEME = 'esa'
 PREVIEW_SCHEME = 'esa'
 
@@ -79,6 +80,7 @@ PREVIEW_SCHEME = 'esa'
 def test_config():
     config = Config()
     config.collection = COLLECTION
+    config.namespace = NAMESPACE
     config.preview_scheme = PREVIEW_SCHEME
     config.scheme = SCHEME
     config.logging_level = 'INFO'
@@ -88,6 +90,7 @@ def test_config():
     StorageName.preview_scheme = config.preview_scheme
     StorageName.scheme = config.scheme
     StorageName.data_source_extensions = config.data_source_extensions
+    StorageName.namespace = config.namespace
     return config
 
 

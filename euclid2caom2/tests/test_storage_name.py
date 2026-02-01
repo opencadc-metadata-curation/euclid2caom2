@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                            (c) 2025.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -143,3 +143,33 @@ def test_storage_name_dr1(test_config):
         lookup = expected_ids.get(test_subject.obs_id)
         assert lookup is not None, f'wrong obs id {test_subject.obs_id}'
         assert test_subject.product_id == lookup, f'product id {test_subject.product_id}'
+
+def test_storage_name_dr1_a_pointing():
+    entries = [
+        'esa:EUCLID_DR1/EUC_MER_BGSUB-MOSAIC-VIS_TILE101274905-407419_20251014T091404.360049Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_BGMOD-VIS_TILE101274905-CF0AF0_20251014T091404.359855Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_MOSAIC-VIS-RMS_TILE101274905-7EB2B_20251014T050241.752350Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE101274905-F80D3A_20251014T082633.923397Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_BGMOD-NIR-Y_TILE101274905-E11F29_20251014T082633.923202Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_MOSAIC-NIR-Y-RMS_TILE101274905-3AEF44_20251014T051457.568788Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_BGSUB-MOSAIC-NIR-J_TILE101274905-78121E_20251014T071506.028397Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_BGMOD-NIR-J_TILE101274905-339E8D_20251014T071506.028200Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_MOSAIC-NIR-J-RMS_TILE101274905-377543_20251014T044813.228101Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_BGSUB-MOSAIC-NIR-H_TILE101274905-A08ACD_20251014T082407.168820Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_BGMOD-NIR-H_TILE101274905-309F8A_20251014T082407.168627Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_MOSAIC-NIR-H-RMS_TILE101274905-996A89_20251014T045004.082209Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_FINAL-CAT_TILE101274905-C3C0A0_20251014T212916.676848Z_00.00.fits',
+        'esa:EUCLID_DR1/EUC_MER_FINAL-MORPH-CAT_TILE101274905-14A4C3_20251014T212915.653487Z_00.00.fits',
+    ]
+
+    expected_ids = [
+        'TILE101274905-NIR-H',
+        'TILE101274905-NIR-J',
+        'TILE101274905-NIR-Y',
+        'TILE101274905-VIS',
+        'TILE101274905-CAT',
+    ]
+    for entry in entries:
+        test_subject = EUCLID_DR1_Name(source_names=[entry])
+        assert test_subject.obs_id in expected_ids, f'wrong obs id {test_subject}'
+        assert test_subject.product_id in expected_ids, f'wrong product id {test_subject}'

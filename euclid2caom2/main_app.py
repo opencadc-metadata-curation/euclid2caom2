@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                            (c) 2025.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -173,32 +173,37 @@ class EUCLID_DR1_Name(EUCLIDName):
     TILE102027660-VIS
     """
 
+    def __init__(self, source_names):
+        self._catalog = False
+        self._filter = None
+        self._pointing = None
+        super().__init__(source_names=source_names)
+
     def get_target_name(self):
         return self._obs_id.split('-')[0]
 
     def set_obs_id(self, **kwargs):
+        # find the pointing
         bits = self._file_name.split('_')
-        temp_obs_id = bits[3].split('-')[0]
-        if '-NIR-' in self._file_name:
-            filter_info = f'NIR-{bits[2].split('-')[-1]}'
-        elif '-VIS_' in self._file_name:
-            filter_info = 'VIS'
-        else:
-            raise mc.CadcException(f'Cannot extract filter name from {self._file_name}')
-        self._obs_id = f'{temp_obs_id}-{filter_info}'
-        if not self._obs_id.startswith('TILE'):
-            raise mc.CadcException(f'Unexpected naming pattern {self._file_name}')
+        for underscore_bit in bits:
+            bit = underscore_bit.split('-')
+            for dash_bit in bit:
+                if dash_bit.startswith('TILE'):
+                    self._pointing = dash_bit
+                if dash_bit in ['H', 'J', 'Y', 'VIS', 'CAT']:
+                    self._filter = dash_bit
+                    if dash_bit == 'CAT':
+                        self._catalog = True
+                if self._filter in ['H', 'J', 'Y']:
+                    self._filter = f'NIR-{self._filter}'
+            if self._filter and self._pointing:
+                break
+        self._obs_id = f'{self._pointing}-{self._filter}'
+        if 'None' in self._obs_id:
+            raise mc.CadcException(f'Could not define observation ID value for {self._file_name}')
 
     def set_product_id(self, **kwargs):
-        bits = self._file_name.split('_')
-        product_id_bits = bits[2].split('-')
-        if product_id_bits[-1] == 'CAT' and len(product_id_bits) == 3:
-            self._product_id = f'{self._obs_id}_{'_'.join(product_id_bits[-2:])}'
-        else:
-            if product_id_bits[0] == 'MOSAIC':
-                self._product_id = f'{self._obs_id}_{product_id_bits[-2]}'
-            else:
-                self._product_id = self._obs_id
+        self._product_id = self._obs_id
 
 
 class EUCLIDMappingAuxiliary(cc.TelescopeMapping2):
