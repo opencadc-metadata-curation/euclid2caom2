@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                            (c) 2025.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -120,18 +120,22 @@ def test_main_app(svo_mock, test_name, test_config, tmp_path, change_test_dir):
     test_subject._observation = observation
 
     for entry in test_set:
+
         def _mock_repo_read(collection, obs_id):
             return test_subject._observation
+
         clients_mock.metadata_client.read.side_effect = _mock_repo_read
 
         def _read_header_mock(ignore1):
             return get_local_file_headers(entry)
+
         clients_mock.data_client.get_head.side_effect = _read_header_mock
 
         def _info_mock(uri):
             temp = get_local_file_info(entry)
             temp.file_type = 'application/fits'
             return temp
+
         clients_mock.data_client.info.side_effect = _info_mock
 
         if '_dr1_' in test_name:
@@ -145,7 +149,7 @@ def test_main_app(svo_mock, test_name, test_config, tmp_path, change_test_dir):
             test_subject.execute(context)
         except mc.CadcException as e:
             logging.error(traceback.format_exc())
-            assert False
+            assert False, storage_name
 
     if test_subject._observation:
         if os.path.exists(expected_fqn):

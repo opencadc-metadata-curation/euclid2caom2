@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                            (c) 2025.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -75,7 +75,7 @@ from euclid2caom2 import composable
 @patch('caom2pipe.client_composable.ClientCollection')
 @patch('caom2pipe.execute_composable.OrganizeExecutes.do_one')
 def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
-    for test_collection in ['EUCLID', 'EUCLID_DR1']:
+    for test_collection in ['EUCLID', 'EUCLID/DR1']:
         do_one_mock.return_value = (0, None)
         test_f_id = 'EUC_MER_BGMOD-VIS_TILE102070858-F79595_20241105T125727.727179Z_00.00'
         test_f_name = f'{test_f_id}.fits'

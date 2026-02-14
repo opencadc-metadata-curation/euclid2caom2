@@ -123,8 +123,7 @@ def run():
 
 
 def _run_incremental():
-    """Uses a state file with a timestamp to identify the work to be done.
-    """
+    """Uses a state file with a timestamp to identify the work to be done."""
     config, storage_name_ctor = _common_init()
     return run_by_state_runner_meta(
         config=config, meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS, storage_name_ctor=storage_name_ctor

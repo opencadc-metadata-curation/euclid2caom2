@@ -2,6 +2,7 @@
 <caom2:Observation xmlns:caom2="http://www.opencadc.org/caom2/xml/v2.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="caom2:DerivedObservation" caom2:id="c7a3a8e9-f8cb-4a2f-aaf2-6013655799e5" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
   <caom2:collection>EUCLID.DR1</caom2:collection>
   <caom2:observationID>TILE101274905-CAT</caom2:observationID>
+  <caom2:metaRelease>2025-10-14T05:01:41.000</caom2:metaRelease>
   <caom2:algorithm>
     <caom2:name>OU-MER</caom2:name>
   </caom2:algorithm>
@@ -13,6 +14,7 @@
         <caom2:groupURI>ivo://cadc.nrc.ca/gms?CADC</caom2:groupURI>
         <caom2:groupURI>ivo://cadc.nrc.ca/gms?EuclidCanRead</caom2:groupURI>
       </caom2:dataReadGroups>
+      <caom2:metaRelease>2025-10-14T05:01:41.000</caom2:metaRelease>
       <caom2:dataProductType>http://www.opencadc.org/caom2/DataProductType#catalog</caom2:dataProductType>
       <caom2:calibrationLevel>4</caom2:calibrationLevel>
       <caom2:provenance>

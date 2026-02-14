@@ -66,6 +66,7 @@
 # ***********************************************************************
 #
 
+from datetime import datetime
 from mock import Mock, patch
 
 from astropy.io.votable import parse_single_table
@@ -88,17 +89,13 @@ def pytest_generate_tests(metafunc):
 
 @patch('caom2pipe.astro_composable.get_vo_table')
 def test_main_app(svo_mock, test_name, test_config, tmp_path, change_test_dir):
-    test_obs_id = test_name.replace('.expected.xml', '').split('/')[-1].split('-')[0]
+    # test_obs_id = test_name.replace('.expected.xml', '').split('/')[-1].split('-')[0]
     if 'VIS' in test_name or 'CAT' in test_name:
         test_filter = test_name.replace('.expected.xml', '').split('/')[-1].split('-')[1]
     else:
         temp = test_name.replace('.expected.xml', '').split('/')[-1].split('-')
         test_filter = f'{temp[-2]}-{temp[-1]}'
     test_set = glob.glob(f'{os.path.dirname(test_name)}/*{test_filter}*.fits.header')
-
-    import logging
-    logging.error(test_filter)
-
 
     svo_mock.side_effect = _svo_mock
     test_config.change_working_directory(tmp_path)
@@ -113,7 +110,6 @@ def test_main_app(svo_mock, test_name, test_config, tmp_path, change_test_dir):
 
     test_reporter = mc.ExecutionReporter2(test_config)
 
-    # expected_fqn = f'{test_name}/{os.path.basename(test_name)}.expected.xml'
     expected_fqn = test_name
     in_fqn = expected_fqn.replace('.expected', '.in')
     actual_fqn = expected_fqn.replace('expected', 'actual')
@@ -132,22 +128,27 @@ def test_main_app(svo_mock, test_name, test_config, tmp_path, change_test_dir):
     test_subject._observation = observation
 
     for entry in test_set:
+
         def _mock_repo_read(collection, obs_id):
             return test_subject._observation
+
         clients_mock.metadata_client.read.side_effect = _mock_repo_read
 
         def _read_header_mock(ignore1):
             return get_local_file_headers(entry)
+
         clients_mock.data_client.get_head.side_effect = _read_header_mock
 
         def _info_mock(uri):
             temp = get_local_file_info(entry)
             temp.file_type = 'application/fits'
             return temp
+
         clients_mock.data_client.info.side_effect = _info_mock
 
         if '_dr1_' in test_name:
-            mc.StorageName.collection = 'EUCLID.DR1'
+            mc.StorageName.collection = test_config.collection
+            mc.StorageName.namespace = test_config.namespace
             storage_name = main_app.EUCLID_DR1_Name(source_names=[entry])
         else:
             storage_name = main_app.EUCLIDName(source_names=[entry])
@@ -160,6 +161,11 @@ def test_main_app(svo_mock, test_name, test_config, tmp_path, change_test_dir):
             assert False, storage_name
 
     if test_subject._observation:
+        constant_date_for_comparison = datetime(year=2025, month=10, day=14, hour=5, minute=1, second=41)
+        test_subject._observation.meta_release = constant_date_for_comparison
+        for plane in test_subject._observation.planes.values():
+            plane.meta_release = constant_date_for_comparison
+
         if os.path.exists(expected_fqn):
             expected = mc.read_obs_from_file(expected_fqn)
             try:

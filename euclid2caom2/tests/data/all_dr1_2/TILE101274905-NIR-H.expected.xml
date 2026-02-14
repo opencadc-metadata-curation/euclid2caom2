@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<caom2:Observation xmlns:caom2="http://www.opencadc.org/caom2/xml/v2.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="caom2:DerivedObservation" caom2:id="ee3ea252-f07b-4a71-ade5-c1e1d47a7c25" caom2:metaProducer="euclid2caom2/0.1.0">
+<caom2:Observation xmlns:caom2="http://www.opencadc.org/caom2/xml/v2.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="caom2:DerivedObservation" caom2:id="fe3ea252-f07b-4a71-ade5-c1e1d47a7c25" caom2:metaProducer="euclid2caom2/0.1.0">
   <caom2:collection>EUCLID.DR1</caom2:collection>
   <caom2:observationID>TILE101274905-NIR-H</caom2:observationID>
   <caom2:metaRelease>2025-10-14T05:01:41.000</caom2:metaRelease>
@@ -28,7 +28,7 @@
     <caom2:name>NIR</caom2:name>
   </caom2:instrument>
   <caom2:planes>
-    <caom2:plane caom2:id="3d43212a-8aef-4370-8445-797023cf8790" caom2:metaProducer="euclid2caom2/0.1.0">
+    <caom2:plane caom2:id="fd43212a-8aef-4370-8445-797023cf8790" caom2:metaProducer="euclid2caom2/0.1.0">
       <caom2:productID>TILE101274905-NIR-H</caom2:productID>
       <caom2:metaRelease>2025-10-14T05:01:41.000</caom2:metaRelease>
       <caom2:dataRelease>2030-01-01T00:00:00.000</caom2:dataRelease>
@@ -36,10 +36,10 @@
         <caom2:groupURI>ivo://cadc.nrc.ca/gms?EuclidCanRead</caom2:groupURI>
         <caom2:groupURI>ivo://cadc.nrc.ca/gms?CADC</caom2:groupURI>
       </caom2:dataReadGroups>
-      <caom2:dataProductType>http://www.opencadc.org/caom2/DataProductType#catalog</caom2:dataProductType>
+      <caom2:dataProductType>image</caom2:dataProductType>
       <caom2:calibrationLevel>4</caom2:calibrationLevel>
       <caom2:provenance>
-        <caom2:name>Euclid OU-MER</caom2:name>
+        <caom2:name>CT_SWarp</caom2:name>
         <caom2:version>10.2</caom2:version>
         <caom2:project>Euclid OU-MER</caom2:project>
         <caom2:producer>euclid7</caom2:producer>
@@ -47,82 +47,16 @@
         <caom2:lastExecuted>2025-10-14T05:01:41.000</caom2:lastExecuted>
       </caom2:provenance>
       <caom2:artifacts>
-        <caom2:artifact caom2:id="7c1dd719-2934-4490-9fab-9d38fd49b35f" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
+        <caom2:artifact caom2:id="fc1dd719-2934-4490-9fab-9d38fd49b35f" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
           <caom2:uri>esa:EUCLID/DR1/EUC_MER_MOSAIC-NIR-H-RMS_TILE101274905-996A89_20251014T045004.082209Z_00.00.fits</caom2:uri>
-          <caom2:productType>weight</caom2:productType>
+          <caom2:productType>auxiliary</caom2:productType>
           <caom2:releaseType>data</caom2:releaseType>
           <caom2:contentType>application/fits</caom2:contentType>
           <caom2:contentLength>4130</caom2:contentLength>
           <caom2:contentChecksum>md5:86e1d55eb9be8aa9f88360c4d5e1fb40</caom2:contentChecksum>
-          <caom2:parts>
-            <caom2:part caom2:id="6f5d5cfb-5c80-4758-aad9-2f653fcfa312">
-              <caom2:name>0</caom2:name>
-              <caom2:chunks>
-                <caom2:chunk caom2:id="252f00a4-bd36-4cd3-9bbe-5989bc0cc0a9" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
-                  <caom2:naxis>2</caom2:naxis>
-                  <caom2:positionAxis1>1</caom2:positionAxis1>
-                  <caom2:positionAxis2>2</caom2:positionAxis2>
-                  <caom2:position>
-                    <caom2:axis>
-                      <caom2:axis1>
-                        <caom2:ctype>RA---TAN</caom2:ctype>
-                        <caom2:cunit>deg</caom2:cunit>
-                      </caom2:axis1>
-                      <caom2:axis2>
-                        <caom2:ctype>DEC--TAN</caom2:ctype>
-                        <caom2:cunit>deg</caom2:cunit>
-                      </caom2:axis2>
-                      <caom2:function>
-                        <caom2:dimension>
-                          <caom2:naxis1>10200</caom2:naxis1>
-                          <caom2:naxis2>10200</caom2:naxis2>
-                        </caom2:dimension>
-                        <caom2:refCoord>
-                          <caom2:coord1>
-                            <caom2:pix>5100.0</caom2:pix>
-                            <caom2:val>56.5968129</caom2:val>
-                          </caom2:coord1>
-                          <caom2:coord2>
-                            <caom2:pix>5100.0</caom2:pix>
-                            <caom2:val>-50.75</caom2:val>
-                          </caom2:coord2>
-                        </caom2:refCoord>
-                        <caom2:cd11>-2.777777777778e-05</caom2:cd11>
-                        <caom2:cd12>0.0</caom2:cd12>
-                        <caom2:cd21>0.0</caom2:cd21>
-                        <caom2:cd22>2.777777777778e-05</caom2:cd22>
-                      </caom2:function>
-                    </caom2:axis>
-                    <caom2:coordsys>ICRS</caom2:coordsys>
-                    <caom2:equinox>2000.0</caom2:equinox>
-                    <caom2:resolution>0.3</caom2:resolution>
-                  </caom2:position>
-                  <caom2:energy>
-                    <caom2:axis>
-                      <caom2:axis>
-                        <caom2:ctype>WAVE</caom2:ctype>
-                        <caom2:cunit>m</caom2:cunit>
-                      </caom2:axis>
-                      <caom2:function>
-                        <caom2:naxis>1</caom2:naxis>
-                        <caom2:delta>4.9855068320428e-07</caom2:delta>
-                        <caom2:refCoord>
-                          <caom2:pix>1.0</caom2:pix>
-                          <caom2:val>1.772095892459e-06</caom2:val>
-                        </caom2:refCoord>
-                      </caom2:function>
-                    </caom2:axis>
-                    <caom2:specsys>TOPOCENT</caom2:specsys>
-                    <caom2:ssysobs>TOPOCENT</caom2:ssysobs>
-                    <caom2:ssyssrc>TOPOCENT</caom2:ssyssrc>
-                    <caom2:bandpassName>NIR_H</caom2:bandpassName>
-                  </caom2:energy>
-                </caom2:chunk>
-              </caom2:chunks>
-            </caom2:part>
-          </caom2:parts>
+          <caom2:parts/>
         </caom2:artifact>
-        <caom2:artifact caom2:id="122b9a2b-b710-454d-af50-52230076f613" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
+        <caom2:artifact caom2:id="f22b9a2b-b710-454d-af50-52230076f613" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
           <caom2:uri>esa:EUCLID/DR1/EUC_MER_BGSUB-MOSAIC-NIR-H_TILE101274905-A08ACD_20251014T082407.168820Z_00.00.fits</caom2:uri>
           <caom2:productType>science</caom2:productType>
           <caom2:releaseType>data</caom2:releaseType>
@@ -130,10 +64,10 @@
           <caom2:contentLength>4130</caom2:contentLength>
           <caom2:contentChecksum>md5:86e1d55eb9be8aa9f88360c4d5e1fb40</caom2:contentChecksum>
           <caom2:parts>
-            <caom2:part caom2:id="7e7c82f8-2897-4aa2-ba4d-98af14d87152">
+            <caom2:part caom2:id="fe7c82f8-2897-4aa2-ba4d-98af14d87152">
               <caom2:name>0</caom2:name>
               <caom2:chunks>
-                <caom2:chunk caom2:id="0318ca67-0928-4d15-b5ba-fdbbe0337a75" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
+                <caom2:chunk caom2:id="f318ca67-0928-4d15-b5ba-fdbbe0337a75" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
                   <caom2:naxis>2</caom2:naxis>
                   <caom2:positionAxis1>1</caom2:positionAxis1>
                   <caom2:positionAxis2>2</caom2:positionAxis2>
@@ -197,7 +131,7 @@
             </caom2:part>
           </caom2:parts>
         </caom2:artifact>
-        <caom2:artifact caom2:id="a84597aa-1e57-46b8-9624-b748cd9a770c" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
+        <caom2:artifact caom2:id="f84597aa-1e57-46b8-9624-b748cd9a770c" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
           <caom2:uri>esa:EUCLID/DR1/EUC_MER_BGMOD-NIR-H_TILE101274905-309F8A_20251014T082407.168627Z_00.00.fits</caom2:uri>
           <caom2:productType>auxiliary</caom2:productType>
           <caom2:releaseType>data</caom2:releaseType>

@@ -70,7 +70,7 @@
 This module implements the ObsBlueprint mapping, as well as the workflow entry point that executes the workflow.
 """
 
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from os.path import basename
 
 from caom2 import CalibrationLevel, Chunk, DataProductType, ProductType, ReleaseType, TypedList
@@ -130,13 +130,15 @@ class EUCLIDName(mc.StorageName):
     def get_target_name(self):
         return self._obs_id
 
+    def is_catalog(self):
+        return '-CAT_' in self._file_name or '_CATALOG-' in self._file_name
+
     def is_auxiliary(self):
         return (
-            '-CAT_' in self._file_name
-            or '_CATALOG-' in self._file_name
-            or '_BGMOD-' in self._file_name
+            '_BGMOD-' in self._file_name
             or '_GRID-PSF-' in self._file_name
             or '-FLAG_' in self._file_name
+            or '-RMS_' in self._file_name
         )
 
     def is_valid(self):
@@ -206,7 +208,7 @@ class EUCLID_DR1_Name(EUCLIDName):
         self._product_id = self._obs_id
 
 
-class EUCLIDMappingAuxiliary(cc.TelescopeMapping2):
+class Base(cc.TelescopeMapping2):
 
     def accumulate_blueprint(self, bp):
         """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
@@ -227,10 +229,9 @@ class EUCLIDMappingAuxiliary(cc.TelescopeMapping2):
         bp.set('Observation.telescope.name', 'Euclid')
 
         bp.set('Plane.calibrationLevel', CalibrationLevel.ANALYSIS_PRODUCT)
-        bp.set('Plane.dataProductType', DataProductType.CATALOG)
         bp.set('Plane.dataRelease', '2030-01-01T00:00:00.000')
         bp.add_attribute('Plane.metaRelease', 'DATE')
-        bp.set('Plane.provenance.name', 'Euclid OU-MER')
+        bp.set('Plane.provenance.name', 'CT_SWarp')
         # # SGw 12-12-24
         bp.set('Plane.provenance.project', 'Euclid OU-MER')
         bp.set('Plane.provenance.reference', 'https://www.euclid-ec.org/')
@@ -257,7 +258,7 @@ class EUCLIDMappingAuxiliary(cc.TelescopeMapping2):
         d = self._headers[ext].get('DATE')
         if d:
             d_dt = mc.make_datetime(d)
-            d_future = d_dt + timedelta(days=2*365)
+            d_future = d_dt + timedelta(days=2 * 365)
         return d_future
 
     def _update_artifact(self, artifact):
@@ -282,7 +283,29 @@ class EUCLIDMappingAuxiliary(cc.TelescopeMapping2):
         return self._observation
 
 
-class EUCLIDMappingNIR(EUCLIDMappingAuxiliary):
+class EUCLIDMappingAuxiliary(Base):
+
+    def accumulate_blueprint(self, bp):
+        """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
+        self._logger.debug('Begin accumulate_bp.')
+        super().accumulate_blueprint(bp)
+        # metadata is public - SGw - 11-02-2026
+        now = datetime.now().isoformat()
+        bp.set_default('Observation.metaRelease', now)
+        bp.set_default('Plane.metaRelease', now)
+
+
+class EUCLIDMappingCatalog(EUCLIDMappingAuxiliary):
+
+    def accumulate_blueprint(self, bp):
+        """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
+        self._logger.debug('Begin accumulate_bp.')
+        super().accumulate_blueprint(bp)
+        bp.set('Plane.dataProductType', DataProductType.CATALOG)
+        bp.set('Plane.provenance.name', 'Euclid OU-MER')
+
+
+class EUCLIDMappingNIR(Base):
 
     def accumulate_blueprint(self, bp):
         """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
@@ -367,6 +390,7 @@ class EUCLIDMappingVIS(EUCLIDMappingNIR):
         # FoV: 0.57 degrees squared
         bp.set('Chunk.position.resolution', 0.1)
         bp.set_default('Chunk.energy.bandpassName', 'VIS')
+
 
 def get_filter_md(filter_name):
     filter_md = filter_cache.get_svo_filter(filter_name[0:3], filter_name)
