@@ -7,10 +7,12 @@ working_directory: /usr/src/app
 proxy_file_name: /usr/src/app/cadcproxy.pem
 # operational value is ivo://cadc.nrc.ca/ams
 # - modifies entries on sc2.canfar.net
-resource_id: ivo://cadc.nrc.ca/sc2repo
+# resource_id: ivo://cadc.nrc.ca/sc2repo
+resource_id: ivo://cadc.nrc.ca/ams
 # operational value is ivo://cadc.nrc.ca/ams/euclid
 # - queries entries on sc2.canfar.net
-tap_id: ivo://cadc.nrc.ca/sc2tap
+# tap_id: ivo://cadc.nrc.ca/sc2tap
+tap_id: ivo://cadc.nrc.ca/ams/shared
 storage_inventory_resource_id: ivo://cadc.nrc.ca/cadc/minoc
 storage_inventory_tap_resource_id: ivo://cadc.nrc.ca/global/luskan
 # file that contains the list of entries to process
@@ -23,7 +25,7 @@ data_source_extensions:
 # when True, the application will look for files with
 # .fits, .gz, .json endings as defining the work to be 
 # done.
-use_local_files: True
+use_local_files: False
 # values DEBUG INFO WARNING ERROR
 logging_level: DEBUG
 # values True False
@@ -50,7 +52,8 @@ retry_file_name: retries.txt
 # this file is created in the logs directory, default is 'progress.txt'
 progress_file_name: progress.txt
 #
-collection: EUCLID
+collection: EUCLID.DR1
+namespace: EUCLID_DR1
 scheme: esa
 preview_scheme: esa
 data_read_groups:
