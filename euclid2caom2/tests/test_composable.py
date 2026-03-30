@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2024.                            (c) 2024.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -75,28 +75,31 @@ from euclid2caom2 import composable
 @patch('caom2pipe.client_composable.ClientCollection')
 @patch('caom2pipe.execute_composable.OrganizeExecutes.do_one')
 def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
-    do_one_mock.return_value = (0, None)
-    test_f_id = 'EUC_MER_BGMOD-VIS_TILE102070858-F79595_20241105T125727.727179Z_00.00'
-    test_f_name = f'{test_f_id}.fits'
-    test_config.change_working_directory(tmp_path.as_posix())
-    test_config.proxy_file_name = 'test_proxy.fqn'
-    test_config.write_to_file(test_config)
+    for test_collection in ['EUCLID', 'EUCLID/DR1']:
+        do_one_mock.return_value = (0, None)
+        test_f_id = 'EUC_MER_BGMOD-VIS_TILE102070858-F79595_20241105T125727.727179Z_00.00'
+        test_f_name = f'{test_f_id}.fits'
+        test_config.collection = test_collection
+        test_config.change_working_directory(tmp_path.as_posix())
+        test_config.proxy_file_name = 'test_proxy.fqn'
+        test_config.write_to_file(test_config)
 
-    with open(test_config.proxy_fqn, 'w') as f:
-        f.write('test content')
-    with open(test_config.work_fqn, 'w') as f:
-        f.write(test_f_name)
+        with open(test_config.proxy_fqn, 'w') as f:
+            f.write('test content')
+        with open(test_config.work_fqn, 'w') as f:
+            f.write(test_f_name)
 
-    try:
-        # execution
-        test_result = composable._run()
-    except Exception as e:
-        assert False, e
+        try:
+            # execution
+            test_result = composable._run()
+        except Exception as e:
+            assert False, e
 
-    assert test_result == 0, 'wrong return value'
-    assert do_one_mock.called, 'should have been called'
-    args, kwargs = do_one_mock.call_args
-    test_storage = args[0]
-    assert isinstance(test_storage, mc.StorageName), type(test_storage)
-    assert test_storage.file_name == test_f_name, 'wrong file name'
-    assert test_storage.source_names[0] == test_f_name, 'wrong fname on disk'
+        assert test_result == 0, 'wrong return value'
+        assert do_one_mock.called, 'should have been called'
+        args, _ = do_one_mock.call_args
+        test_storage = args[0]
+        assert isinstance(test_storage, mc.StorageName), type(test_storage)
+        assert test_storage.file_name == test_f_name, 'wrong file name'
+        assert test_storage.source_names[0] == test_f_name, 'wrong fname on disk'
+        assert test_storage.file_uri.startswith(f'esa:{test_config.namespace}/'), f'wrong file_uri {test_storage.file_uri}'

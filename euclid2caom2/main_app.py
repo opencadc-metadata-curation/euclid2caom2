@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2024.                            (c) 2024.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -70,7 +70,7 @@
 This module implements the ObsBlueprint mapping, as well as the workflow entry point that executes the workflow.
 """
 
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from os.path import basename
 
 from caom2 import CalibrationLevel, Chunk, DataProductType, ProductType, ReleaseType, TypedList
@@ -80,6 +80,7 @@ from caom2pipe import manage_composable as mc
 
 
 __all__ = [
+    'EUCLID_DR1_Name',
     'EUCLIDMappingNIR',
     'EUCLIDMappingVIS',
     'EUCLIDName',
@@ -126,13 +127,18 @@ class EUCLIDName(mc.StorageName):
             raise mc.CadcException(f'Calling get_filter_name when it cannot answer correctly.')
         return result
 
+    def get_target_name(self):
+        return self._obs_id
+
+    def is_catalog(self):
+        return '-CAT_' in self._file_name or '_CATALOG-' in self._file_name
+
     def is_auxiliary(self):
         return (
-            '-CAT_' in self._file_name
-            or '_CATALOG-' in self._file_name
-            or '_BGMOD-' in self._file_name
+            '_BGMOD-' in self._file_name
             or '_GRID-PSF-' in self._file_name
             or '-FLAG_' in self._file_name
+            or '-RMS_' in self._file_name
         )
 
     def is_valid(self):
@@ -159,17 +165,50 @@ class EUCLIDName(mc.StorageName):
                 self._product_id = f'{self._obs_id}_{product_id_bits[-1]}'
 
 
-class EUCLIDMappingAuxiliary(cc.TelescopeMapping2):
-    def __init__(self, clients, config, dest_uri, observation, reporter, storage_name):
-        self._reporter = reporter
-        super().__init__(
-            storage_name,
-            storage_name.metadata.get(dest_uri),
-            clients,
-            self._reporter.observable,
-            observation,
-            config,
-    )
+class EUCLID_DR1_Name(EUCLIDName):
+    """
+    Split each band into it's own Observation:
+    e.g.
+    TILE102027660-NIR-Y
+    TILE102027660-NIR-J
+    TILE102027660-NIR-H
+    TILE102027660-VIS
+    """
+
+    def __init__(self, source_names):
+        self._catalog = False
+        self._filter = None
+        self._pointing = None
+        super().__init__(source_names=source_names)
+
+    def get_target_name(self):
+        return self._obs_id.split('-')[0]
+
+    def set_obs_id(self, **kwargs):
+        # find the pointing
+        bits = self._file_name.split('_')
+        for underscore_bit in bits:
+            bit = underscore_bit.split('-')
+            for dash_bit in bit:
+                if dash_bit.startswith('TILE'):
+                    self._pointing = dash_bit
+                if dash_bit in ['H', 'J', 'Y', 'VIS', 'CAT']:
+                    self._filter = dash_bit
+                    if dash_bit == 'CAT':
+                        self._catalog = True
+                if self._filter in ['H', 'J', 'Y']:
+                    self._filter = f'NIR-{self._filter}'
+            if self._filter and self._pointing:
+                break
+        self._obs_id = f'{self._pointing}-{self._filter}'
+        if 'None' in self._obs_id:
+            raise mc.CadcException(f'Could not define observation ID value for {self._file_name}')
+
+    def set_product_id(self, **kwargs):
+        self._product_id = self._obs_id
+
+
+class Base(cc.TelescopeMapping2):
 
     def accumulate_blueprint(self, bp):
         """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
@@ -183,20 +222,19 @@ class EUCLIDMappingAuxiliary(cc.TelescopeMapping2):
 
         bp.set('Observation.instrument.name', '_get_instrument_name()')
         bp.set('Observation.proposal.id', 'Q1')
-        bp.set('Observation.target.name', self._storage_name.obs_id)
+        bp.set('Observation.target.name', self._storage_name.get_target_name())
         bp.add_attribute('Observation.target_position.point.cval1', 'CRVAL1')
         bp.add_attribute('Observation.target_position.point.cval2', 'CRVAL2')
         bp.set('Observation.target_position.coordsys', 'FK5')
         bp.set('Observation.telescope.name', 'Euclid')
 
         bp.set('Plane.calibrationLevel', CalibrationLevel.ANALYSIS_PRODUCT)
-        bp.set('Plane.dataProductType', DataProductType.CATALOG)
         bp.set('Plane.dataRelease', '2030-01-01T00:00:00.000')
         bp.add_attribute('Plane.metaRelease', 'DATE')
-        bp.set('Plane.provenance.name', 'Euclid OU-MER')
+        bp.set('Plane.provenance.name', 'CT_SWarp')
         # # SGw 12-12-24
         bp.set('Plane.provenance.project', 'Euclid OU-MER')
-        bp.set('Plane.provenance.reference', 'https://www.euclid-ec.org')
+        bp.set('Plane.provenance.reference', 'https://www.euclid-ec.org/')
 
         bp.set('Artifact.productType', ProductType.AUXILIARY)
         bp.set('Artifact.releaseType', ReleaseType.DATA)
@@ -220,7 +258,7 @@ class EUCLIDMappingAuxiliary(cc.TelescopeMapping2):
         d = self._headers[ext].get('DATE')
         if d:
             d_dt = mc.make_datetime(d)
-            d_future = d_dt + timedelta(days=2*365)
+            d_future = d_dt + timedelta(days=2 * 365)
         return d_future
 
     def _update_artifact(self, artifact):
@@ -245,16 +283,29 @@ class EUCLIDMappingAuxiliary(cc.TelescopeMapping2):
         return self._observation
 
 
-class EUCLIDMappingNIR(EUCLIDMappingAuxiliary):
-    def __init__(self, clients, config, dest_uri, observation, reporter, storage_name):
-        super().__init__(
-            clients,
-            config,
-            dest_uri,
-            observation,
-            reporter,
-            storage_name,
-        )
+class EUCLIDMappingAuxiliary(Base):
+
+    def accumulate_blueprint(self, bp):
+        """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
+        self._logger.debug('Begin accumulate_bp.')
+        super().accumulate_blueprint(bp)
+        # metadata is public - SGw - 11-02-2026
+        now = datetime.now().isoformat()
+        bp.set_default('Observation.metaRelease', now)
+        bp.set_default('Plane.metaRelease', now)
+
+
+class EUCLIDMappingCatalog(EUCLIDMappingAuxiliary):
+
+    def accumulate_blueprint(self, bp):
+        """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
+        self._logger.debug('Begin accumulate_bp.')
+        super().accumulate_blueprint(bp)
+        bp.set('Plane.dataProductType', DataProductType.CATALOG)
+        bp.set('Plane.provenance.name', 'Euclid OU-MER')
+
+
+class EUCLIDMappingNIR(Base):
 
     def accumulate_blueprint(self, bp):
         """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
@@ -330,17 +381,16 @@ class EUCLIDMappingNIR(EUCLIDMappingAuxiliary):
 
 class EUCLIDMappingVIS(EUCLIDMappingNIR):
 
-    def __init__(self, clients, config, dest_uri, observation, reporter, storage_name):
-        super().__init__(clients, config, dest_uri, observation, reporter, storage_name)
-
     def accumulate_blueprint(self, bp):
         super().accumulate_blueprint(bp)
+        bp.set('Plane.dataProductType', DataProductType.IMAGE)
         # from https://www.euclid-ec.org/science/overview/#
         # VIS
         # pixel scale: 0.1 arcsecond
         # FoV: 0.57 degrees squared
         bp.set('Chunk.position.resolution', 0.1)
         bp.set_default('Chunk.energy.bandpassName', 'VIS')
+
 
 def get_filter_md(filter_name):
     filter_md = filter_cache.get_svo_filter(filter_name[0:3], filter_name)

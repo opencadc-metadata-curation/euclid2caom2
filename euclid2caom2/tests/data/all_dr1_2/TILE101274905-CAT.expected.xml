@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<caom2:Observation xmlns:caom2="http://www.opencadc.org/caom2/xml/v2.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="caom2:DerivedObservation" caom2:id="c7a3a8e9-f8cb-4a2f-aaf2-6013655799e5" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
+  <caom2:collection>EUCLID.DR1</caom2:collection>
+  <caom2:observationID>TILE101274905-CAT</caom2:observationID>
+  <caom2:metaRelease>2025-10-14T05:01:41.000</caom2:metaRelease>
+  <caom2:algorithm>
+    <caom2:name>OU-MER</caom2:name>
+  </caom2:algorithm>
+  <caom2:planes>
+    <caom2:plane caom2:id="b4d0775c-80a3-4ca2-a85e-0ee0e4ad387b" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
+      <caom2:productID>TILE101274905-CAT</caom2:productID>
+      <caom2:dataRelease>2030-01-01T00:00:00.000</caom2:dataRelease>
+      <caom2:dataReadGroups>
+        <caom2:groupURI>ivo://cadc.nrc.ca/gms?CADC</caom2:groupURI>
+        <caom2:groupURI>ivo://cadc.nrc.ca/gms?EuclidCanRead</caom2:groupURI>
+      </caom2:dataReadGroups>
+      <caom2:metaRelease>2025-10-14T05:01:41.000</caom2:metaRelease>
+      <caom2:dataProductType>http://www.opencadc.org/caom2/DataProductType#catalog</caom2:dataProductType>
+      <caom2:calibrationLevel>4</caom2:calibrationLevel>
+      <caom2:provenance>
+        <caom2:name>Euclid OU-MER</caom2:name>
+        <caom2:project>Euclid OU-MER</caom2:project>
+        <caom2:reference>https://www.euclid-ec.org/</caom2:reference>
+      </caom2:provenance>
+      <caom2:artifacts>
+        <caom2:artifact caom2:id="1d937f1e-baa9-4e8c-9aee-9b81f819540d" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
+          <caom2:uri>esa:EUCLID_DR1/EUC_MER_FINAL-MORPH-CAT_TILE101274905-14A4C3_20251014T212915.653487Z_00.00.fits</caom2:uri>
+          <caom2:productType>auxiliary</caom2:productType>
+          <caom2:releaseType>data</caom2:releaseType>
+          <caom2:contentType>application/fits</caom2:contentType>
+          <caom2:contentLength>28430</caom2:contentLength>
+          <caom2:contentChecksum>md5:c9d7803404245adb88510eb654d532f6</caom2:contentChecksum>
+          <caom2:parts/>
+        </caom2:artifact>
+        <caom2:artifact caom2:id="d6e8c954-2137-4f34-8fb3-6b7e51bca038" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
+          <caom2:uri>esa:EUCLID_DR1/EUC_MER_FINAL-CAT_TILE101274905-C3C0A0_20251014T212916.676848Z_00.00.fits</caom2:uri>
+          <caom2:productType>auxiliary</caom2:productType>
+          <caom2:releaseType>data</caom2:releaseType>
+          <caom2:contentType>application/fits</caom2:contentType>
+          <caom2:contentLength>119150</caom2:contentLength>
+          <caom2:contentChecksum>md5:c2682e30641b67bf5f26ba71f58c2f2d</caom2:contentChecksum>
+          <caom2:parts/>
+        </caom2:artifact>
+      </caom2:artifacts>
+    </caom2:plane>
+  </caom2:planes>
+</caom2:Observation>
