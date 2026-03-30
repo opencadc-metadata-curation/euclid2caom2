@@ -48,7 +48,7 @@
       </caom2:provenance>
       <caom2:artifacts>
         <caom2:artifact caom2:id="0f466e2d-07b5-4378-9b7f-20145687a75a" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
-          <caom2:uri>esa:EUCLID/DR1/EUC_MER_MOSAIC-NIR-Y-RMS_TILE101274905-3AEF44_20251014T051457.568788Z_00.00.fits</caom2:uri>
+          <caom2:uri>esa:EUCLID_DR1/EUC_MER_MOSAIC-NIR-Y-RMS_TILE101274905-3AEF44_20251014T051457.568788Z_00.00.fits</caom2:uri>
           <caom2:productType>auxiliary</caom2:productType>
           <caom2:releaseType>data</caom2:releaseType>
           <caom2:contentType>application/fits</caom2:contentType>
@@ -57,7 +57,7 @@
           <caom2:parts/>
         </caom2:artifact>
         <caom2:artifact caom2:id="9680de0c-7d3b-4b10-b530-894f0641ead2" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
-          <caom2:uri>esa:EUCLID/DR1/EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE101274905-F80D3A_20251014T082633.923397Z_00.00.fits</caom2:uri>
+          <caom2:uri>esa:EUCLID_DR1/EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE101274905-F80D3A_20251014T082633.923397Z_00.00.fits</caom2:uri>
           <caom2:productType>science</caom2:productType>
           <caom2:releaseType>data</caom2:releaseType>
           <caom2:contentType>application/fits</caom2:contentType>
@@ -132,7 +132,7 @@
           </caom2:parts>
         </caom2:artifact>
         <caom2:artifact caom2:id="442e4dbc-45fa-4242-b2f3-178074a8a0f3" caom2:metaProducer="EUCLID.DR12caom2/0.0.0">
-          <caom2:uri>esa:EUCLID/DR1/EUC_MER_BGMOD-NIR-Y_TILE101274905-E11F29_20251014T082633.923202Z_00.00.fits</caom2:uri>
+          <caom2:uri>esa:EUCLID_DR1/EUC_MER_BGMOD-NIR-Y_TILE101274905-E11F29_20251014T082633.923202Z_00.00.fits</caom2:uri>
           <caom2:productType>auxiliary</caom2:productType>
           <caom2:releaseType>data</caom2:releaseType>
           <caom2:contentType>application/fits</caom2:contentType>

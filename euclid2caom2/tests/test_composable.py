@@ -102,4 +102,4 @@ def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
         assert isinstance(test_storage, mc.StorageName), type(test_storage)
         assert test_storage.file_name == test_f_name, 'wrong file name'
         assert test_storage.source_names[0] == test_f_name, 'wrong fname on disk'
-        assert test_storage.file_uri.startswith(f'esa:{test_collection}/'), f'wrong file_uri {test_storage.file_uri}'
+        assert test_storage.file_uri.startswith(f'esa:{test_config.namespace}/'), f'wrong file_uri {test_storage.file_uri}'

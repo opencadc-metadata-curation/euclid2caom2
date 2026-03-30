@@ -71,7 +71,8 @@ from caom2pipe.manage_composable import Config, StorageName, TaskType
 import pytest
 
 COLLECTION = 'EUCLID.DR1'
-NAMESPACE = 'EUCLID/DR1'
+# NAMESPACE = 'EUCLID/DR1'
+NAMESPACE = 'EUCLID_DR1'
 SCHEME = 'esa'
 PREVIEW_SCHEME = 'esa'
 
